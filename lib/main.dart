@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import './Module/rb_file.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,11 +8,12 @@ import 'package:ray_camera/Dropdown.dart';
 import 'package:video_player/video_player.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import './path.dart';
+
 
 
 
 class CameraExampleHome extends StatefulWidget {
+  
   @override
   _CameraExampleHomeState createState() {
     return _CameraExampleHomeState();
@@ -46,7 +47,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   bool enableAudio = true;
   String type = 'back';
   final List<int> numbers = [1, 2, 3];
+  List<RbFile> rbFiles=new List();
    var path = [];
+
+   var data =[];
   var hello = new Map();
   String drop;
  
@@ -296,73 +300,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 //     });
 //     return images;
 //   }
-  Widget _thumbnailWidget() {
-      double a = 10;
-    // List<Widget> images=new List();
-    // path.map((tx) {
-    //                           var index = path.indexOf(tx);
-    //                           var last = path.length - 1;
-                          
-    //                         //  print("element=${index}");
-    //                           if(index >=last-3){
-    //                              a = a + 6;
-    //                   images.add(new Positioned(
-    //                     left: a,
-    //                     top: a,
-    //                     child: Image.file(
-    //                       File(tx),
-    //                       height: 60,
-    //                       width: 60,
-    //                     ),
-    //                   ));
-    //                           }                            
-    // });
-  
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            videoController == null && imagePath == null
-                ? Container()
-                : SizedBox(
-                    width: 60.0,
-                    height: 60.0,
-                    child: Container(
-                        child:  Stack(
-                                 children: 
-                                 path.map((tx) {
-                                        var index = path.indexOf(tx);
-                                        var last = path.length;
-                                    
-                                      //  print("element=${index}");
-                                        if(index >=last-3){
-                                          a = a + 6;
-                                          return(new Positioned(
-                                              left: a,
-                                              top: a,
-                                              child: Image.file(
-                                                File(tx),
-                                                height: 60,
-                                                width: 60,
-                                              ),
-                                            ));}
-                                      else{
-                                        return Text("");
-                                      }
-                                      }).toList()
-                                      ))
-
-                    ),
-          ],
-        ),
-      ),
-    );
-  }
- 
- 
-  /// Display the thumbnail of the captured image or video.
   Widget _thumbnailWidget2() {
       double a = 10;
     // List<Widget> images=new List();
@@ -429,6 +366,81 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
  
  
+  /// Display the thumbnail of the captured image or video.
+  Widget _thumbnailWidget() {
+      double a = 10;
+    List<Widget> images=new List();
+    rbFiles.forEach((rbFile){
+print("element=${rbFile.path}");
+    });
+    rbFiles.map((tx) {
+       print("element=${tx.path}");
+                              var index = path.indexOf(tx);
+                              var last = path.length - 1;
+                          
+                            //  print("element=${index}");
+                              if(index >=last-3){
+                                 a = a + 6;
+                      images.add(new Positioned(
+                        left: a,
+                        top: a,
+                        child: Image.file(
+                          File(tx.path),
+                          height: 60,
+                          width: 60,
+                        ),
+                      ));
+                              }                            
+    });
+  
+    return Expanded(
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            videoController == null && imagePath == null
+                ? Container()
+                : SizedBox(
+                    width: 60.0,
+                    height: 60.0,
+                    child: Container(
+                        child:  Stack(
+                                 children: 
+                                   rbFiles.map((tx) {
+                                  
+                                        var index = rbFiles.indexOf(tx);
+                                        var last = rbFiles.length;
+                                    
+                                       print("element=$index");
+                                        if(index >=last-3){
+                                          a = a + 6;
+                                          return(new Positioned(
+                                              left: a,
+                                              top: a,
+                                              child: Image.file(
+                                                File(tx.path),
+                                                height: 60,
+                                                width: 60,
+                                              ),
+                                            ));}
+                                      else{
+                                        return Text("");
+                                      }
+                                      }).toList()
+                        
+                                      ))
+
+                    ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+ 
+ 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   void showInSnackBar(String message) {
@@ -474,10 +486,14 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         });
         if (filePath != null)
         // showInSnackBar('Picture saved to $filePath');
-                path.add(filePath);
-
+                // path.add(filePath);
+               { RbFile rbFile=new RbFile(path:filePath,type:drop);
+                rbFiles.add(rbFile);
+                // print("data ${rbFile.path}");
+               }
         // path.add({'path':filePath,'drop':drop} );
-        print(path);
+        // data.add({'path':filePath,'type':drop});
+        // print(data);
       }
     });
   }
